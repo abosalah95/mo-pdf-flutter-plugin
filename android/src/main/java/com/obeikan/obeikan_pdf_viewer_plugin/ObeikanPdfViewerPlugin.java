@@ -71,6 +71,7 @@ public class ObeikanPdfViewerPlugin extends FlutterActivity implements FlutterPl
   @Override
   public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
     Log.e("mosalah","onReattachedToActivityForConfigChanges");
+    annotationClickedEventChannel = new EventChannel(mMessenger, STREAM);
     annotationClickedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
       @Override
       public void onListen(Object arguments, EventChannel.EventSink emitter) {
