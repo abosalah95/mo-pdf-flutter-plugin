@@ -11,6 +11,7 @@ void main() {
   runApp(MaterialApp(home: const MyApp()));
 }
 
+
 class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -19,6 +20,37 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: RaisedButton(
+          onPressed: (){
+            Navigator.push(context, MaterialPageRoute(
+              builder: (context) => MyApp2(),
+            ));
+          },
+          child: Text("pdf"),
+        ),
+      ),
+    );
+  }
+}
+
+class MyApp2 extends StatefulWidget {
+  const MyApp2({Key? key}) : super(key: key);
+
+  @override
+  State<MyApp2> createState() => _MyApp2State();
+}
+
+class _MyApp2State extends State<MyApp2> {
 
   @override
   void initState() {
@@ -38,9 +70,9 @@ class _MyAppState extends State<MyApp> {
             loadingWidget: const Center(child: CircularProgressIndicator(),),
             annotationsList: const [
               {'id':1,'x': 200,'y': 200,'page': 1},
-              {'id':2,'x': 350,'y': 400,'page': 1},
-              {'id':3,'x': 350,'y': 450,'page': 2},
-              {'id':4,'x': 400,'y': 100,'page': 3},
+              // {'id':2,'x': 350,'y': 400,'page': 1},
+              // {'id':3,'x': 350,'y': 450,'page': 2},
+              // {'id':4,'x': 400,'y': 100,'page': 3},
             ],
             onAnoutationTap: (int id){
               _showMyDialog(id);
