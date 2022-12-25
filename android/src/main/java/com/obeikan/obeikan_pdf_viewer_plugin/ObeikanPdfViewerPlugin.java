@@ -24,9 +24,6 @@ public class ObeikanPdfViewerPlugin extends FlutterActivity implements FlutterPl
   private PlatformViewRegistry mRegistry;
   private BinaryMessenger mMessenger;
   private MethodChannel mMethodChannel;
-  public static final String STREAM = "com.obeikan.obeikan_pdf_viewer_plugin/eventChannel";
-  private EventChannel annotationClickedEventChannel;
-  private EventChannel.EventSink attachEvent;
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
@@ -43,19 +40,8 @@ public class ObeikanPdfViewerPlugin extends FlutterActivity implements FlutterPl
   @Override
   public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
     Log.e("mosalah","onAttachedToActivity");
-    annotationClickedEventChannel = new EventChannel(mMessenger, STREAM);
-    annotationClickedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
-      @Override
-      public void onListen(Object arguments, EventChannel.EventSink emitter) {
-        attachEvent=emitter;
-        mRegistry.registerViewFactory("salah", new ObeikanPdfViewerFactory(mMessenger,attachEvent,binding.getActivity()));
-      }
-      @Override
-      public void onCancel(Object arguments) {
-        Log.e("TAG_NAME", "cancled");
-      }
-    });
-//    mRegistry.registerViewFactory("salah", new ObeikanPdfViewerFactory(mMessenger,attachEvent,binding.getActivity()));
+
+    mRegistry.registerViewFactory("salah", new ObeikanPdfViewerFactory(mMessenger,binding.getActivity()));
   }
 
   @Override
@@ -70,18 +56,9 @@ public class ObeikanPdfViewerPlugin extends FlutterActivity implements FlutterPl
   @Override
   public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
     Log.e("mosalah","onReattachedToActivityForConfigChanges");
-//    annotationClickedEventChannel = new EventChannel(mMessenger, STREAM);
-//    annotationClickedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
-//      @Override
-//      public void onListen(Object arguments, EventChannel.EventSink emitter) {
-//        attachEvent=emitter;
-//        mRegistry.registerViewFactory("salah", new ObeikanPdfViewerFactory(mMessenger,attachEvent,binding.getActivity()));
-//      }
-//      @Override
-//      public void onCancel(Object arguments) {
-//        Log.e("TAG_NAME", "cancled");
-//      }
-//    });
+
+     mRegistry.registerViewFactory("salah", new ObeikanPdfViewerFactory(mMessenger,binding.getActivity()));
+
   }
 
   @Override

@@ -19,13 +19,25 @@ import java.util.Map;
 public class ObeikanPdfViewerFactory extends PlatformViewFactory{
     private final BinaryMessenger messenger;
     private final WeakReference<Context> mContextRef;
-    private final EventChannel.EventSink attachEvent;
+    public static final String STREAM = "com.obeikan.obeikan_pdf_viewer_plugin/eventChannel";
+    private EventChannel annotationClickedEventChannel;
+    private EventChannel.EventSink attachEvent;
 
 
-    public ObeikanPdfViewerFactory(BinaryMessenger messenger, EventChannel.EventSink attachEvent, Context activityContext) {
+    public ObeikanPdfViewerFactory(BinaryMessenger messenger, Context activityContext) {
         super(StandardMessageCodec.INSTANCE);
         this.messenger = messenger;
-        this.attachEvent = attachEvent;
+        annotationClickedEventChannel = new EventChannel(messenger, STREAM);
+        annotationClickedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+            @Override
+            public void onListen(Object arguments, EventChannel.EventSink emitter) {
+                attachEvent=emitter;
+            }
+            @Override
+            public void onCancel(Object arguments) {
+                Log.e("TAG_NAME", "cancled");
+            }
+        });
         Log.e("TAG_NAME123", attachEvent+"");
 
         mContextRef = new WeakReference<>(activityContext);
