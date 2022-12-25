@@ -49,7 +49,6 @@ public class ObeikanPdfViewerPlugin extends FlutterActivity implements FlutterPl
       public void onListen(Object arguments, EventChannel.EventSink emitter) {
         attachEvent=emitter;
         mRegistry.registerViewFactory("salah", new ObeikanPdfViewerFactory(mMessenger,attachEvent,binding.getActivity()));
-
       }
       @Override
       public void onCancel(Object arguments) {
@@ -71,18 +70,18 @@ public class ObeikanPdfViewerPlugin extends FlutterActivity implements FlutterPl
   @Override
   public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
     Log.e("mosalah","onReattachedToActivityForConfigChanges");
-    annotationClickedEventChannel = new EventChannel(mMessenger, STREAM);
-    annotationClickedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
-      @Override
-      public void onListen(Object arguments, EventChannel.EventSink emitter) {
-        attachEvent=emitter;
-        mRegistry.registerViewFactory("salah", new ObeikanPdfViewerFactory(mMessenger,attachEvent,binding.getActivity()));
-      }
-      @Override
-      public void onCancel(Object arguments) {
-        Log.e("TAG_NAME", "cancled");
-      }
-    });
+//    annotationClickedEventChannel = new EventChannel(mMessenger, STREAM);
+//    annotationClickedEventChannel.setStreamHandler(new EventChannel.StreamHandler() {
+//      @Override
+//      public void onListen(Object arguments, EventChannel.EventSink emitter) {
+//        attachEvent=emitter;
+//        mRegistry.registerViewFactory("salah", new ObeikanPdfViewerFactory(mMessenger,attachEvent,binding.getActivity()));
+//      }
+//      @Override
+//      public void onCancel(Object arguments) {
+//        Log.e("TAG_NAME", "cancled");
+//      }
+//    });
   }
 
   @Override
