@@ -182,7 +182,7 @@ public class ObeikanPdfViewer implements PlatformView, MethodChannel.MethodCallH
 
     @Override
     public void onPageError(int page, Throwable t) {
-
+        Toast.makeText(activityContext, "Error at page: $page", Toast.LENGTH_SHORT).show();
     }
 
     @Override
