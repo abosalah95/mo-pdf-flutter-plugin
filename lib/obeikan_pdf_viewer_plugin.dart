@@ -41,6 +41,8 @@ class _ObeikanPdfViewerPluginState extends State<ObeikanPdfViewerPlugin> {
   void _startListener() {
     print("_startListener");
     _streamSubscription = stream.receiveBroadcastStream().listen(_listenStream);
+    print(_streamSubscription.toString());
+
   }
 
   void _cancelListener() {
