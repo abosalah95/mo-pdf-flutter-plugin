@@ -123,9 +123,13 @@ public class ObeikanPdfViewer implements PlatformView, MethodChannel.MethodCallH
                 .defaultPage(currentPage)
                 .onPageChange(this)
                 .enableAnnotationRendering(true)
-                .onLoad(this)
+//                .onLoad(this)
                 .enableSwipe(true)
-                .scrollHandle(new DefaultScrollHandle(activityContext))
+                .swipeHorizontal(true)
+                .pageFling(true)
+                .fitEachPage(true)
+                .pageSnap(true)
+//                .scrollHandle(new DefaultScrollHandle(activityContext))
                 .spacing(10) // in dp
                 .onPageError(this)
                 .onTap(this)
@@ -166,6 +170,7 @@ public class ObeikanPdfViewer implements PlatformView, MethodChannel.MethodCallH
     @Override
     public void onLongPress(MotionEvent e) {
         Log.e("mosalah","onLongPress");
+
 //        String referenceHash = new StringBuilder()
 //                .append("ReferenceHash:")
 //                .append(UUID.randomUUID().toString())

@@ -23,7 +23,6 @@ public class ObeikanPdfViewerFactory extends PlatformViewFactory{
     private EventChannel annotationClickedEventChannel;
     private EventChannel.EventSink attachEvent;
 
-
     public ObeikanPdfViewerFactory(BinaryMessenger messenger, Context activityContext) {
         super(StandardMessageCodec.INSTANCE);
         this.messenger = messenger;

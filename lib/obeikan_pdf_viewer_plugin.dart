@@ -41,12 +41,19 @@ class _ObeikanPdfViewerPluginState extends State<ObeikanPdfViewerPlugin> {
   void _startListener() {
     print("_startListener");
     _streamSubscription = stream.receiveBroadcastStream().listen(_listenStream);
-    print(_streamSubscription.toString());
+   _streamSubscription.resume();
 
   }
 
   void _cancelListener() {
     _streamSubscription.cancel();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _cancelListener();
   }
 
   void _listenStream(value) {
@@ -56,11 +63,12 @@ class _ObeikanPdfViewerPluginState extends State<ObeikanPdfViewerPlugin> {
 
 
   initMethodChannelCall() async {
-    await getFileAndPassToPdfViewer();
-    setState(() {
-      isLoading=false;
+    await getFileAndPassToPdfViewer().then((value){
+      setState(() {
+        isLoading=false;
+      });
+      _startListener();
     });
-    _startListener();
   }
 
   Future<void> drawAnnotation() async {
@@ -125,11 +133,15 @@ class _ObeikanPdfViewerPluginState extends State<ObeikanPdfViewerPlugin> {
     // Pass parameters to the platform side.
     final Map<String, dynamic> creationParams = <String, dynamic>{};
 
-    return isLoading?widget.loadingWidget: AndroidView(
-      viewType: viewType,
-      layoutDirection: TextDirection.ltr,
-      creationParams: creationParams,
-      creationParamsCodec: const StandardMessageCodec(),
+    return isLoading?widget.loadingWidget: Stack(
+      children: [
+        AndroidView(
+          viewType: viewType,
+          layoutDirection: TextDirection.ltr,
+          creationParams: creationParams,
+          creationParamsCodec: const StandardMessageCodec(),
+        ),
+      ],
     );
   }
 
