@@ -14,11 +14,10 @@ import 'package:permission_handler/permission_handler.dart';
 
 
 class ObeikanPdfViewerPlugin extends StatefulWidget{
-  ObeikanPdfViewerPlugin({Key? key, required this.url, required this.loadingWidget,required this.onAnoutationTap, this.annotationsList}) : super(key: key);
+  ObeikanPdfViewerPlugin({Key? key, required this.url,required this.onAnoutationTap, this.annotationsList}) : super(key: key);
   String url ;
   Function(int id) onAnoutationTap;
   List<Map<String,dynamic>>? annotationsList;
-  Widget loadingWidget;
   @override
   State<ObeikanPdfViewerPlugin> createState() => _ObeikanPdfViewerPluginState();
 }
@@ -28,7 +27,6 @@ class _ObeikanPdfViewerPluginState extends State<ObeikanPdfViewerPlugin> {
   static const platform = MethodChannel('obeikan_pdf_viewer_plugin');
   static const stream = EventChannel('com.obeikan.obeikan_pdf_viewer_plugin/eventChannel');
 
-  bool isLoading = true;
 
   @override
   void initState() {
@@ -63,12 +61,8 @@ class _ObeikanPdfViewerPluginState extends State<ObeikanPdfViewerPlugin> {
 
 
   initMethodChannelCall() async {
-    await getFileAndPassToPdfViewer().then((value){
-      setState(() {
-        isLoading=false;
-      });
-      _startListener();
-    });
+    await getFileAndPassToPdfViewer();
+    _startListener();
   }
 
   Future<void> drawAnnotation() async {
@@ -92,7 +86,7 @@ class _ObeikanPdfViewerPluginState extends State<ObeikanPdfViewerPlugin> {
                 final result = await platform.invokeMethod('setPdfViewerFile', {'filePath': value.path});
                 if(result){
                   setState(() {
-                    isLoading=false;
+                    // isLoading=false;
                     drawAnnotation();
                   });
                 }
@@ -133,7 +127,7 @@ class _ObeikanPdfViewerPluginState extends State<ObeikanPdfViewerPlugin> {
     // Pass parameters to the platform side.
     final Map<String, dynamic> creationParams = <String, dynamic>{};
 
-    return isLoading?widget.loadingWidget: Stack(
+    return Stack(
       children: [
         AndroidView(
           viewType: viewType,
@@ -144,6 +138,8 @@ class _ObeikanPdfViewerPluginState extends State<ObeikanPdfViewerPlugin> {
       ],
     );
   }
-
-
 }
+
+
+
+

@@ -64,21 +64,19 @@ class _MyApp2State extends State<MyApp2> {
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
-        body: Center(
-          child: ObeikanPdfViewerPlugin(
-            url: "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf",
-            loadingWidget: const Center(child: CircularProgressIndicator(),),
-            annotationsList: const [
-              {'id':1,'x': 200,'y': 200,'page': 1},
-              {'id':2,'x': 350,'y': 400,'page': 1},
-              {'id':3,'x': 350,'y': 450,'page': 2},
-              {'id':4,'x': 400,'y': 100,'page': 3},
-            ],
-            onAnoutationTap: (int id){
-              _showMyDialog(id);
-            },
-          ),
+        body: ObeikanPdfViewerPlugin(
+          url: "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf",
+          annotationsList: const [
+            {'id':1,'x': 200,'y': 200,'page': 1},
+            {'id':2,'x': 350,'y': 400,'page': 1},
+            {'id':3,'x': 350,'y': 450,'page': 2},
+            {'id':4,'x': 400,'y': 100,'page': 3},
+          ],
+          onAnoutationTap: (int id){
+            _showMyDialog(id);
+          },
         ),
+
       ),
     );
   }
