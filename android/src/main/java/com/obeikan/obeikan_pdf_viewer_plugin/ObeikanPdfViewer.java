@@ -53,9 +53,6 @@ import org.json.JSONObject;
 public class ObeikanPdfViewer implements PlatformView, MethodChannel.MethodCallHandler, OnPageErrorListener, OnLoadCompleteListener, OnPageChangeListener, OnLongPressListener, LinkHandler, OnTapListener {
 
     private MethodChannel channel;
-    public static final String STREAM = "com.obeikan.obeikan_pdf_viewer_plugin/eventChannel";
-    private EventChannel.EventSink attachEvent;
-    private EventChannel annotationClickedEventChannel;
     private Uri currUri ;
 
     private static final String TAG = "mo";
@@ -71,12 +68,9 @@ public class ObeikanPdfViewer implements PlatformView, MethodChannel.MethodCallH
 
 
 
-    ObeikanPdfViewer(@NonNull Context context,Context activityContext, BinaryMessenger messenger, EventChannel.EventSink attachEvent, int id, @Nullable Map<String, Object> creationParams) {
+    ObeikanPdfViewer(@NonNull Context context,Context activityContext, BinaryMessenger messenger, int id, @Nullable Map<String, Object> creationParams) {
         Log.e("mosalah","Obeikan PdfViewer constructor");
         this.activityContext=activityContext;
-        this.attachEvent=attachEvent;
-        Log.e("TAG_NAME123", attachEvent+"");
-
         pdfViewer = new MagicalPdfViewer(context,null);
         progressBar= new ProgressBar(context);
         channel = new MethodChannel(messenger, "obeikan_pdf_viewer_plugin");
@@ -86,6 +80,7 @@ public class ObeikanPdfViewer implements PlatformView, MethodChannel.MethodCallH
 
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
+
         if (call.method.equals("setPdfViewerFile")) {
             currUri = Uri.fromFile(new File(call.argument("filePath").toString()));
             displayFileFromUri();
@@ -102,11 +97,34 @@ public class ObeikanPdfViewer implements PlatformView, MethodChannel.MethodCallH
                 handleAddAnnotation(point,obj.get("id").toString(),Integer.parseInt(obj.get("page").toString()));
             }
             result.success("AnnotationDrew");
+        } else if (call.method.equals("pageCount")) {
+            getPageCount(result);
+        }else if (call.method.equals("currentPage")) {
+            getCurrentPage(result);
+        }else if (call.method.equals("setPage")) {
+            setPage(call, result);
         } else {
             result.notImplemented();
         }
     }
 
+
+    void getPageCount(MethodChannel.Result result) {
+        result.success(pdfViewer.getPageCount());
+    }
+
+    void getCurrentPage(MethodChannel.Result result) {
+        result.success(
+                pdfViewer.getCurrentPage());
+    }
+
+    void setPage(MethodCall call, MethodChannel.Result result) {
+        if (call.argument("page") != null) {
+            int page = (int) call.argument("page");
+            pdfViewer.jumpTo(page);
+        }
+        result.success(true);
+    }
 
     @Override
     public View getView() {
@@ -141,11 +159,7 @@ public class ObeikanPdfViewer implements PlatformView, MethodChannel.MethodCallH
 
     @Override
     public void handleLinkEvent(LinkTapEvent event) {
-//        channel.invokeMethod("AnnotationTapped",null);
-        Toast.makeText(activityContext, event.getLink().getUri(), Toast.LENGTH_SHORT).show();
-
-
-        attachEvent.success(Integer.parseInt(event.getLink().getUri()));
+        channel.invokeMethod("AnnotationTapped",null);
     }
 
     @Override
@@ -170,19 +184,11 @@ public class ObeikanPdfViewer implements PlatformView, MethodChannel.MethodCallH
     @Override
     public void onLongPress(MotionEvent e) {
         Log.e("mosalah","onLongPress");
-
-//        String referenceHash = new StringBuilder()
-//                .append("ReferenceHash:")
-//                .append(UUID.randomUUID().toString())
-//                .toString(); // generate reference hash
-//        Log.e("mosalah:",referenceHash);
-//        handleAddAnnotation(new PointF(50,70),referenceHash);
     }
 
     @Override
     public void onPageChanged(int page, int pageCount) {
         currentPage=page;
-
     }
 
     @Override
@@ -196,7 +202,6 @@ public class ObeikanPdfViewer implements PlatformView, MethodChannel.MethodCallH
     }
 
     public void handleAddAnnotation(PointF point,String id,int page) {
-
 
         byte[] OCGCover = PublicFunction.getByteFromDrawable(getView().getContext(), R.drawable.ic_logo_v4);
 

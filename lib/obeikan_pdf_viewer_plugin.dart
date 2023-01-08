@@ -3,10 +3,8 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/services.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
@@ -14,8 +12,9 @@ import 'package:permission_handler/permission_handler.dart';
 
 
 class ObeikanPdfViewerPlugin extends StatefulWidget{
-  ObeikanPdfViewerPlugin({Key? key, required this.url,required this.onAnoutationTap, this.annotationsList}) : super(key: key);
+  ObeikanPdfViewerPlugin({Key? key, required this.url, required this.lang,required this.onAnoutationTap, this.annotationsList}) : super(key: key);
   String url ;
+  String lang ;
   Function(int id) onAnoutationTap;
   List<Map<String,dynamic>>? annotationsList;
   @override
@@ -25,7 +24,6 @@ class ObeikanPdfViewerPlugin extends StatefulWidget{
 class _ObeikanPdfViewerPluginState extends State<ObeikanPdfViewerPlugin> {
 
   static const platform = MethodChannel('obeikan_pdf_viewer_plugin');
-  static const stream = EventChannel('com.obeikan.obeikan_pdf_viewer_plugin/eventChannel');
 
 
   @override
@@ -34,34 +32,37 @@ class _ObeikanPdfViewerPluginState extends State<ObeikanPdfViewerPlugin> {
     initMethodChannelCall();
   }
 
-  late StreamSubscription _streamSubscription;
-
-  void _startListener() {
-    print("_startListener");
-    _streamSubscription = stream.receiveBroadcastStream().listen(_listenStream);
-   _streamSubscription.resume();
-  }
-
-  void _cancelListener() {
-    _streamSubscription.cancel();
-  }
 
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
-    _cancelListener();
-  }
-
-  void _listenStream(value) {
-    debugPrint("Received From Native:  $value\n");
-    widget.onAnoutationTap(value);
   }
 
 
   initMethodChannelCall() async {
     await getFileAndPassToPdfViewer();
-    _startListener();
+    platform.setMethodCallHandler(_onMethodCall);
+  }
+
+  Future<bool?> _onMethodCall(MethodCall call) async {
+    switch (call.method) {
+      case 'AnnotationTapped':
+      // if (_widget.onRender != null) {
+      //   _widget.onRender!(call.arguments['pages']);
+      // }
+
+        widget.onAnoutationTap(1);
+
+
+        print("mosalah fuckin done");
+        return null;
+      case 'onPageChanged':
+
+        return null;
+    }
+    throw MissingPluginException(
+        '${call.method} was invoked but has no handler');
   }
 
   Future<void> drawAnnotation() async {
@@ -130,7 +131,7 @@ class _ObeikanPdfViewerPluginState extends State<ObeikanPdfViewerPlugin> {
       children: [
         AndroidView(
           viewType: viewType,
-          layoutDirection: TextDirection.ltr,
+          layoutDirection: widget.lang=='ar'?TextDirection.rtl:TextDirection.ltr,
           creationParams: creationParams,
           creationParamsCodec: const StandardMessageCodec(),
         ),
@@ -139,6 +140,32 @@ class _ObeikanPdfViewerPluginState extends State<ObeikanPdfViewerPlugin> {
   }
 }
 
+
+
+class PDFViewController {
+  PDFViewController();
+
+  final MethodChannel _channel = const MethodChannel('obeikan_pdf_viewer_plugin');
+
+
+  Future<int?> getPageCount() async {
+    final int? pageCount = await _channel.invokeMethod('pageCount');
+    return pageCount;
+  }
+
+  Future<int?> getCurrentPage() async {
+    final int? currentPage = await _channel.invokeMethod('currentPage');
+    return currentPage;
+  }
+
+  Future<bool?> setPage(int page) async {
+    final bool? isSet =
+    await _channel.invokeMethod('setPage', <String, dynamic>{
+      'page': page,
+    });
+    return isSet;
+  }
+}
 
 
 

@@ -24,12 +24,18 @@ public class ObeikanPdfViewerPlugin extends FlutterActivity implements FlutterPl
   private PlatformViewRegistry mRegistry;
   private BinaryMessenger mMessenger;
   private MethodChannel mMethodChannel;
+//  public static final String STREAM = "com.obeikan.obeikan_pdf_viewer_plugin/eventChannel";
+//  private EventChannel annotationClickedEventChannel;
+//  private EventChannel.EventSink attachEvent;
 
   @Override
   public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
     mMessenger = flutterPluginBinding.getBinaryMessenger();
     mRegistry = flutterPluginBinding.getPlatformViewRegistry();
     mMethodChannel = new MethodChannel(mMessenger, "pdftron_flutter");
+    flutterPluginBinding
+            .getPlatformViewRegistry()
+            .registerViewFactory("salah", new ObeikanPdfViewerFactory(flutterPluginBinding.getBinaryMessenger(),flutterPluginBinding.getApplicationContext()));
   }
 
   @Override
@@ -49,7 +55,6 @@ public class ObeikanPdfViewerPlugin extends FlutterActivity implements FlutterPl
     Log.e("mosalah","onDetachedFromActivityForConfigChanges");
     mRegistry = null;
     mMessenger = null;
-//    annotationClickedEventChannel=null;
     mMethodChannel.setMethodCallHandler(null);
   }
 
@@ -57,7 +62,7 @@ public class ObeikanPdfViewerPlugin extends FlutterActivity implements FlutterPl
   public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
     Log.e("mosalah","onReattachedToActivityForConfigChanges");
 
-     mRegistry.registerViewFactory("salah", new ObeikanPdfViewerFactory(mMessenger,binding.getActivity()));
+    mRegistry.registerViewFactory("salah", new ObeikanPdfViewerFactory(mMessenger,binding.getActivity()));
 
   }
 

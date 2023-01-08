@@ -52,9 +52,23 @@ class MyApp2 extends StatefulWidget {
 
 class _MyApp2State extends State<MyApp2> {
 
+  late PDFViewController _pdfViewerController;
+
   @override
   void initState() {
     super.initState();
+    _pdfViewerController = PDFViewController();
+    getn();
+  }
+
+  Future<void> getn() async {
+    int? y = await _pdfViewerController.getCurrentPage();
+    print (y);
+    int? x =await _pdfViewerController.getPageCount();
+    print (x) ;
+    await _pdfViewerController.setPage(10);
+    y = await _pdfViewerController.getCurrentPage();
+    print (y);
   }
 
   @override
@@ -63,8 +77,17 @@ class _MyApp2State extends State<MyApp2> {
       home: Scaffold(
         appBar: AppBar(
           title: const Text('Plugin example app'),
+          actions: [
+            IconButton(onPressed: () async {
+              print (await _pdfViewerController.getCurrentPage()) ;
+              print (await _pdfViewerController.getPageCount()) ;
+              await _pdfViewerController.setPage(0);
+              print (await _pdfViewerController.getCurrentPage()) ;
+            }, icon: Icon(Icons.notifications))
+          ],
         ),
         body: ObeikanPdfViewerPlugin(
+          lang:'ar',
           url: "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf",
           annotationsList: const [
             {'id':1,'x': 200,'y': 200,'page': 1},
@@ -100,6 +123,12 @@ class _MyApp2State extends State<MyApp2> {
             TextButton(
               child: const Text('Approve'),
               onPressed: () {
+                _pdfViewerController.getCurrentPage().then((value) {
+                  print(value);
+                }) ;
+                print (_pdfViewerController.getPageCount()) ;
+                print (_pdfViewerController.setPage(10)) ;
+                print (_pdfViewerController.getCurrentPage()) ;
                 Navigator.of(context).pop();
               },
             ),
