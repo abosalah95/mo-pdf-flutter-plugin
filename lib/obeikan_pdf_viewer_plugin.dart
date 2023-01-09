@@ -12,10 +12,18 @@ import 'package:permission_handler/permission_handler.dart';
 
 
 class ObeikanPdfViewerPlugin extends StatefulWidget{
-  ObeikanPdfViewerPlugin({Key? key, required this.url, required this.lang,required this.onAnoutationTap, this.annotationsList}) : super(key: key);
+  ObeikanPdfViewerPlugin({
+    Key? key, required this.url,
+    required this.lang,
+    required this.onAnoutationTap,
+    required this.onPageChanged,
+    required this.onBookLoaded,
+    this.annotationsList}) : super(key: key);
   String url ;
   String lang ;
   Function(int id) onAnoutationTap;
+  Function(int pageNum) onPageChanged;
+  Function() onBookLoaded;
   List<Map<String,dynamic>>? annotationsList;
   @override
   State<ObeikanPdfViewerPlugin> createState() => _ObeikanPdfViewerPluginState();
@@ -48,17 +56,13 @@ class _ObeikanPdfViewerPluginState extends State<ObeikanPdfViewerPlugin> {
   Future<bool?> _onMethodCall(MethodCall call) async {
     switch (call.method) {
       case 'AnnotationTapped':
-      // if (_widget.onRender != null) {
-      //   _widget.onRender!(call.arguments['pages']);
-      // }
-
         widget.onAnoutationTap(1);
-
-
-        print("mosalah fuckin done");
         return null;
       case 'onPageChanged':
-
+        widget.onPageChanged(1);
+        return null;
+      case 'onBookLoaded':
+        widget.onBookLoaded();
         return null;
     }
     throw MissingPluginException(
@@ -139,7 +143,6 @@ class _ObeikanPdfViewerPluginState extends State<ObeikanPdfViewerPlugin> {
     );
   }
 }
-
 
 
 class PDFViewController {

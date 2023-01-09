@@ -80,12 +80,12 @@ public class ObeikanPdfViewer implements PlatformView, MethodChannel.MethodCallH
 
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
-
         if (call.method.equals("setPdfViewerFile")) {
             currUri = Uri.fromFile(new File(call.argument("filePath").toString()));
             displayFileFromUri();
             result.success(true);
-        }else if (call.method.equals("drawPoints")) {
+        }
+        else if (call.method.equals("drawPoints")) {
             ArrayList annotations = call.argument("annotationsList");
             for(int i = 0 ; i < annotations.size() ; i++){
                 Log.e("mosalah",annotations.get(i).toString());
@@ -97,13 +97,17 @@ public class ObeikanPdfViewer implements PlatformView, MethodChannel.MethodCallH
                 handleAddAnnotation(point,obj.get("id").toString(),Integer.parseInt(obj.get("page").toString()));
             }
             result.success("AnnotationDrew");
-        } else if (call.method.equals("pageCount")) {
+        }
+        else if (call.method.equals("pageCount")) {
             getPageCount(result);
-        }else if (call.method.equals("currentPage")) {
+        }
+        else if (call.method.equals("currentPage")) {
             getCurrentPage(result);
-        }else if (call.method.equals("setPage")) {
+        }
+        else if (call.method.equals("setPage")) {
             setPage(call, result);
-        } else {
+        }
+        else {
             result.notImplemented();
         }
     }
@@ -159,7 +163,7 @@ public class ObeikanPdfViewer implements PlatformView, MethodChannel.MethodCallH
 
     @Override
     public void handleLinkEvent(LinkTapEvent event) {
-        channel.invokeMethod("AnnotationTapped",null);
+        channel.invokeMethod("AnnotationTapped", event.getLink());
     }
 
     @Override
@@ -178,6 +182,7 @@ public class ObeikanPdfViewer implements PlatformView, MethodChannel.MethodCallH
         pdfViewer.setMidZoom(5f);
         pdfViewer.setMaxZoom(10f);
         pdfViewer.zoomTo(1f);
+        channel.invokeMethod("onBookLoaded",null);
 
     }
 
@@ -189,6 +194,7 @@ public class ObeikanPdfViewer implements PlatformView, MethodChannel.MethodCallH
     @Override
     public void onPageChanged(int page, int pageCount) {
         currentPage=page;
+        channel.invokeMethod("onPageChanged", currentPage);
     }
 
     @Override
