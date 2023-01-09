@@ -56,10 +56,10 @@ class _ObeikanPdfViewerPluginState extends State<ObeikanPdfViewerPlugin> {
   Future<bool?> _onMethodCall(MethodCall call) async {
     switch (call.method) {
       case 'AnnotationTapped':
-        widget.onAnoutationTap(1);
+        widget.onAnoutationTap(call.arguments);
         return null;
       case 'onPageChanged':
-        widget.onPageChanged(1);
+        widget.onPageChanged(call.arguments);
         return null;
       case 'onBookLoaded':
         widget.onBookLoaded();

@@ -145,7 +145,7 @@ public class ObeikanPdfViewer implements PlatformView, MethodChannel.MethodCallH
                 .defaultPage(currentPage)
                 .onPageChange(this)
                 .enableAnnotationRendering(true)
-//                .onLoad(this)
+                .onLoad(this)
                 .enableSwipe(true)
                 .swipeHorizontal(true)
                 .pageFling(true)
@@ -163,7 +163,7 @@ public class ObeikanPdfViewer implements PlatformView, MethodChannel.MethodCallH
 
     @Override
     public void handleLinkEvent(LinkTapEvent event) {
-        channel.invokeMethod("AnnotationTapped", event.getLink());
+        channel.invokeMethod("AnnotationTapped", event.getLink().getUri());
     }
 
     @Override
