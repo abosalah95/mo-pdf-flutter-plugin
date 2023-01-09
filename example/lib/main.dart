@@ -30,13 +30,25 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: RaisedButton(
-          onPressed: (){
-            Navigator.push(context, MaterialPageRoute(
-              builder: (context) => MyApp2(),
-            ));
-          },
-          child: Text("pdf"),
+        child: Column(
+          children: [
+            RaisedButton(
+              onPressed: (){
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => MyApp2(url:"http://ebooks.syncfusion.com/downloads/flutter-succinctly/flutter-succinctly.pdf"),
+                ));
+              },
+              child: Text("pdf"),
+            ),
+            RaisedButton(
+              onPressed: (){
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (context) => MyApp2(url:"https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf"),
+                ));
+              },
+              child: Text("pdf2"),
+            ),
+          ],
         ),
       ),
     );
@@ -44,8 +56,8 @@ class _MyAppState extends State<MyApp> {
 }
 
 class MyApp2 extends StatefulWidget {
-  const MyApp2({Key? key}) : super(key: key);
-
+   MyApp2({Key? key,required this.url}) : super(key: key);
+  String url;
   @override
   State<MyApp2> createState() => _MyApp2State();
 }
@@ -88,7 +100,7 @@ class _MyApp2State extends State<MyApp2> {
         ),
         body: ObeikanPdfViewerPlugin(
           lang:'ar',
-          url: "https://pdftron.s3.amazonaws.com/downloads/pl/PDFTRON_mobile_about.pdf",
+          url: widget.url,
           annotationsList: const [
             {'id':1,'x': 200,'y': 200,'page': 1},
             {'id':2,'x': 350,'y': 400,'page': 1},

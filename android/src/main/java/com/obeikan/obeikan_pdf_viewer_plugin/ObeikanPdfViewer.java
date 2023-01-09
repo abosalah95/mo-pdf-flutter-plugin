@@ -41,6 +41,7 @@ import com.github.barteksc.pdfviewer.listener.OnLoadCompleteListener;
 import com.github.barteksc.pdfviewer.listener.OnLongPressListener;
 import com.github.barteksc.pdfviewer.listener.OnPageChangeListener;
 import com.github.barteksc.pdfviewer.listener.OnPageErrorListener;
+import com.github.barteksc.pdfviewer.listener.OnRenderListener;
 import com.github.barteksc.pdfviewer.listener.OnTapListener;
 import com.github.barteksc.pdfviewer.model.LinkTapEvent;
 import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle;
@@ -50,7 +51,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class ObeikanPdfViewer implements PlatformView, MethodChannel.MethodCallHandler, OnPageErrorListener, OnLoadCompleteListener, OnPageChangeListener, OnLongPressListener, LinkHandler, OnTapListener {
+public class ObeikanPdfViewer implements PlatformView, MethodChannel.MethodCallHandler, OnPageErrorListener, OnLoadCompleteListener, OnPageChangeListener, OnRenderListener, OnLongPressListener, LinkHandler, OnTapListener {
 
     private MethodChannel channel;
     private Uri currUri ;
@@ -88,7 +89,6 @@ public class ObeikanPdfViewer implements PlatformView, MethodChannel.MethodCallH
         else if (call.method.equals("drawPoints")) {
             ArrayList annotations = call.argument("annotationsList");
             for(int i = 0 ; i < annotations.size() ; i++){
-                Log.e("mosalah",annotations.get(i).toString());
                 HashMap obj = (HashMap) annotations.get(i);
                 PointF point= new PointF(
                         Float.parseFloat(obj.get("x").toString()),
@@ -139,7 +139,6 @@ public class ObeikanPdfViewer implements PlatformView, MethodChannel.MethodCallH
     public void dispose() {}
 
     public void displayFileFromUri() {
-        Log.e("mosalah","displayFileFromUri");
         if (currUri==null)return;
         this.configurator = pdfViewer.fromUri(currUri)
                 .defaultPage(currentPage)
@@ -149,6 +148,7 @@ public class ObeikanPdfViewer implements PlatformView, MethodChannel.MethodCallH
                 .enableSwipe(true)
                 .swipeHorizontal(true)
                 .pageFling(true)
+//                .onRender(this)
                 .fitEachPage(true)
                 .pageSnap(true)
 //                .scrollHandle(new DefaultScrollHandle(activityContext))
@@ -157,7 +157,6 @@ public class ObeikanPdfViewer implements PlatformView, MethodChannel.MethodCallH
                 .onTap(this)
                 .onLongPress(this)
                 .linkHandler(this);
-
         this.configurator.load();
     }
 
@@ -168,27 +167,15 @@ public class ObeikanPdfViewer implements PlatformView, MethodChannel.MethodCallH
 
     @Override
     public void loadComplete(int nbPages) {
-        Meta meta = pdfViewer.getDocumentMeta();
-        Log.e(TAG, "title = " + meta.getTitle());
-        Log.e(TAG, "author = " + meta.getAuthor());
-        Log.e(TAG, "subject = " + meta.getSubject());
-        Log.e(TAG, "keywords = " + meta.getKeywords());
-        Log.e(TAG, "creator = " + meta.getCreator());
-        Log.e(TAG, "producer = " + meta.getProducer());
-        Log.e(TAG, "creationDate = " + meta.getCreationDate());
-        Log.e(TAG, "modDate = " + meta.getModDate());
-
         pdfViewer.setMinZoom(1f);
         pdfViewer.setMidZoom(5f);
         pdfViewer.setMaxZoom(10f);
         pdfViewer.zoomTo(1f);
         channel.invokeMethod("onBookLoaded",null);
-
     }
 
     @Override
     public void onLongPress(MotionEvent e) {
-        Log.e("mosalah","onLongPress");
     }
 
     @Override
@@ -219,9 +206,7 @@ public class ObeikanPdfViewer implements PlatformView, MethodChannel.MethodCallH
             @Override
             public void run() {
                 try {
-                    Log.e("mosalah:","is start");
                     MagicalPdfCore.getInstance().addOCG(activityContext, pointF, uri, currPage, referenceHash, OCGCover, OCGWidth, OCGHeight);
-                    Log.e("mosalah:","is add success");
                     displayFileFromUri();
                 } catch (MagicalException e) {
                     e.printStackTrace();
@@ -229,5 +214,14 @@ public class ObeikanPdfViewer implements PlatformView, MethodChannel.MethodCallH
                 }
             }
         });
+    }
+
+    @Override
+    public void onInitiallyRendered(int nbPages) {
+        pdfViewer.setMinZoom(1f);
+        pdfViewer.setMidZoom(5f);
+        pdfViewer.setMaxZoom(10f);
+        pdfViewer.zoomTo(1f);
+        channel.invokeMethod("onBookLoaded",null);
     }
 }
