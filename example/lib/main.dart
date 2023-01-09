@@ -97,7 +97,8 @@ class _MyApp2State extends State<MyApp2> {
           ],
           onAnoutationTap: (int id){
             _showMyDialog(id);
-          }, onBookLoaded: () {  }, onPageChanged: (int pageNum) {  },
+          }, onBookLoaded: () {  },
+          onPageChanged: (int pageNum) {  },
         ),
 
 
